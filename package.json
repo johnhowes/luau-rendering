@@ -2,7 +2,7 @@
   "name": "luau-url-encoding",
   "version": "0.1.0",
   "description": "Encodes luau formData as x-www-form-urlencoded.",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "mocha test --compilers js:babel-register --require babel-polyfill",
     "lint": "jshint *.js --exclude-path /node_modules/**",

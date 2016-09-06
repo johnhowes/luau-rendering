@@ -2,13 +2,13 @@
 /* jshint esversion: 6 */
 "use strict";
 
-function urlFormDataEncoding(formdata) {
+function urlFormDataEncoding(formData) {
   function urlEncodeNameValuePair(entry) {
     var value = entry.length > 1 ? entry[1] : "";
     return encodeURIComponent(entry[0]) + "=" + encodeURIComponent(value);
   }
   
-  var content = Array.from(formdata.entries).map(urlEncodeNameValuePair)
+  var content = Array.from(formData.entries()).map(urlEncodeNameValuePair)
     .join("&")
     .replace(/%20/g, "+")
     .replace(/'/g, "%27");
