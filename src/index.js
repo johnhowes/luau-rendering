@@ -1,6 +1,7 @@
 /* jshint node: true */
 /* jshint esversion: 6 */
 "use strict";
+const Buffer = require("buffer").Buffer;
 
 function urlFormDataEncoding(formData) {
   function urlEncodeNameValuePair(entry) {
