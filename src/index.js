@@ -18,8 +18,6 @@ function matchesTypeRange(typeRange, type) {
 module.exports = exports = function (app) {
   app.render = async (typeRange, renderingFn) => {
     app.render.middleware.push(async (ctx, next) => {
-      if (ctx.element) return await next();
-      
       var response = await ctx.response;
       
       if (matchesTypeRange(typeRange, response.type)) {
