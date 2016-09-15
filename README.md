@@ -1,8 +1,7 @@
-Luau URL Encoding
+Luau Rendering
 ================================================
 
-Luau middleware component to convert ctx.request.formData to ctx.request.content with a type of 
-`application/x-www-form-urlencoded`.
+Adds content rendering to a Luau app.
 
 Usage
 ------------------------------------------------
@@ -10,18 +9,34 @@ Usage
 ```js
 
 const app = new Luau();
-const urlEncoding = require("luau-url-encoding");
+const rendering = require("luau-rendering");
+const httpRequest = require("luau-http-request");
 
-app.use(urlEncoding);
-
-var formData = new FormData();
-formData.append("name", "George Burns");
-app.request("http://example.com/", {
-  enctype: "application/x-www-form-urlencoded",
-  formData: formData
-}).then(ctx => {
-  console.log(ctx.request.content.type === "application/x-www-form-urlencoded");
-  console.log(ctx.request.content.data.toString() === "name=George+Burns");
+app.use(async (ctx, next) => {
+  ctx.createElement = name => document.createElement(name);
+  await next();
 });
 
+app.use(httpRequest);
+app.use(rendering(app));
+
+app.render("*/*", async (ctx, next) => {
+  await next();
+  
+  var response = await ctx.response;
+  ctx.element.dataset.contentType = response.type;
+});
+
+app.render("text/plain", async (ctx) => {
+  var response = await response;
+  var element = ctx.element = ctx.createElement("pre");
+  element.textContent = response.data.toString();
+});
+
+app.use(async (ctx, next) => {
+  document.body.appendChild(ctx.element);
+  await next();
+});
+
+app.request("http://example.com/greeting");
 ```

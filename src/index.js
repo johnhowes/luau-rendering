@@ -1,29 +1,40 @@
 /* jshint node: true */
 /* jshint esversion: 6 */
 "use strict";
-const Buffer = require("buffer").Buffer;
+const contentType = require("content-type");
 
-function urlFormDataEncoding(formData) {
-  function urlEncodeNameValuePair(entry) {
-    var value = entry.length > 1 ? entry[1] : "";
-    return encodeURIComponent(entry[0]) + "=" + encodeURIComponent(value);
-  }
+function matchesTypeRange(typeRange, type) {
+  if (typeRange === "*/*") return true;
+  type = contentType.parse(type).type;
+  if (typeRange === type) return true;
   
-  var content = Array.from(formData.entries()).map(urlEncodeNameValuePair)
-    .join("&")
-    .replace(/%20/g, "+")
-    .replace(/'/g, "%27");
-
-  return {
-    data: new Buffer(content, "utf8"),
-    type: "application/x-www-form-urlencoded"
-  };
+  var expected = typeRange.split("/");
+  var actual = type.split("/");
+  if (expected[1] === "*") return expected[0] === actual[0];
+  
+  return false;
 }
 
-module.exports = exports = async (ctx, next) => {
-  if (ctx.request.formData && ctx.request.enctype === "application/x-www-form-urlencoded") {
-    ctx.request.content = urlFormDataEncoding(ctx.request.formData);
-  }
+module.exports = exports = function (app) {
+  app.render = async (typeRange, renderingFn) => {
+    app.render.middleware.push(async (ctx, next) => {
+      if (ctx.element) return await next();
+      
+      var response = await ctx.response;
+      
+      if (matchesTypeRange(typeRange, response.type)) {
+        return await renderingFn(ctx, next);
+      }
+      
+      await next();
+    });
+  };
   
-  await next();
+  app.render.middleware = [];
+  
+  return async (ctx, next) => {
+    var renderingComposite = app.compose(app.render.middleware);
+    await renderingComposite(ctx);
+    await next();
+  };
 };

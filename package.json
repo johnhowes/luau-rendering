@@ -1,27 +1,28 @@
 {
-  "name": "luau-url-encoding",
+  "name": "luau-rendering",
   "version": "0.1.0",
-  "description": "Encodes luau formData as x-www-form-urlencoded.",
+  "description": "Adds content rendering to a Luau app.",
   "main": "lib/index.js",
   "scripts": {
     "test": "mocha test --compilers js:babel-register --require babel-polyfill",
     "lint": "jshint *.js --exclude-path /node_modules/**",
-    "build": "babel src -d lib"
+    "build": "babel src -d lib",
+    "prebuild": "npm test"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/johnhowes/luau-url-encoding.git"
+    "url": "git+https://github.com/johnhowes/luau-rendering.git"
   },
   "keywords": [
-    "lynx",
-    "user-agent"
+    "user-agent",
+    "luau"
   ],
   "author": "John Howes",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/johnhowes/luau-url-encoding/issues"
+    "url": "https://github.com/johnhowes/luau-rendering/issues"
   },
-  "homepage": "https://github.com/johnhowes/luau-url-encoding#readme",
+  "homepage": "https://github.com/johnhowes/luau-rendering#readme",
   "devDependencies": {
     "babel-cli": "^6.11.4",
     "babel-plugin-transform-async-to-generator": "^6.8.0",
@@ -34,6 +35,7 @@
     "mocha": "^2.5.3"
   },
   "dependencies": {
-    "buffer": "^4.9.1"
+    "buffer": "^4.9.1",
+    "content-type": "^1.0.2"
   }
 }
